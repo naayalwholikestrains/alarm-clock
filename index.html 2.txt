@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova Alarm Clock</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --background: #0b1020;
+  --panel: #141c30;
+  --card: #1b2740;
+  --orange: #ff9b54;
+  --purple: #a78bfa;
+  --text: #f4f6ff;
+  --muted: #929db5;
+  --red: #ff647c;
+  --green: #55d6a1;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 10% 0%, #27305b 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 100%, #39234e 0%, transparent 35%),
+    var(--background);
+}
+
+.container {
+  width: 100%;
+  min-height: calc(100vh - 32px);
+  margin: auto;
+  padding: clamp(16px, 3vw, 30px);
+  border: 1px solid #ffffff12;
+  border-radius: 20px;
+  background: #111a2def;
+  box-shadow: 0 15px 60px #0005;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--orange), #ff6d79);
+  font-size: 22px;
+}
+
+.brand h1 {
+  font-size: 21px;
+  margin: 0;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.live-label {
+  font-size: 11px;
+  color: var(--green);
+  background: #55d6a115;
+  border: 1px solid #55d6a130;
+  padding: 7px 11px;
+  border-radius: 30px;
+}
+
+.clock-panel {
+  text-align: center;
+  padding: 25px 10px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #202d4b, #171e36);
+  border: 1px solid #ffffff10;
+  border-radius: 18px;
+}
+
+.clock-label {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+#clock {
+  font-size: clamp(42px, 9vw, 72px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 9px 0;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(90deg, #fff, #ffbd91);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+#date {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 22px 0 12px;
+  color: #e5e9ff;
+}
+
+.add-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  padding: 15px;
+  border-radius: 15px;
+  background: var(--panel);
+  border: 1px solid #ffffff0d;
+}
+
+select {
+  color: white;
+  background: #27344f;
+  border: 1px solid #ffffff15;
+  border-radius: 9px;
+  padding: 11px 15px;
+  font-size: 14px;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-weight: bold;
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+button:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.add-button {
+  color: #21152a;
+  background: linear-gradient(135deg, #ffbd78, var(--orange));
+  padding: 12px 20px;
+}
+
+.list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 24px 0 12px;
+}
+
+.list-heading h2 {
+  font-size: 15px;
+  margin: 0;
+}
+
+#alarmCount {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+#alarmList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: 12px;
+}
+
+.alarm {
+  background: linear-gradient(145deg, var(--card), #172138);
+  border: 1px solid #ffffff10;
+  padding: 16px;
+  border-radius: 14px;
+  transition: 0.2s;
+}
+
+.alarm:hover {
+  border-color: #ffffff28;
+}
+
+.alarm-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.alarm-time {
+  font-size: 27px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-tag {
+  font-size: 10px;
+  padding: 6px 9px;
+  border-radius: 30px;
+  background: #a78bfa18;
+  color: var(--purple);
+}
+
+.status-tag.ringing {
+  background: #ff647c20;
+  color: var(--red);
+}
+
+.countdown {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-background {
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
+  background: #35415d;
+  border-radius: 20px;
+  margin: 12px 0 15px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--purple), var(--orange));
+  transition: width 0.9s linear;
+}
+
+.alarm-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.alarm-buttons button {
+  flex: 1;
+}
+
+.delete-button {
+  color: #ff8193;
+  background: #ff647c18;
+  border: 1px solid #ff647c30;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 35px 15px;
+  border: 1px dashed #ffffff25;
+  border-radius: 14px;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+
+.empty-icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 17px;
+}
+
+.clear-button {
+  color: #ff9baa;
+  background: #ff647c17;
+  border: 1px solid #ff647c30;
+  padding: 11px 16px;
+}
+
+.clear-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.footer {
+  text-align: center;
+  color: #74809a;
+  font-size: 10px;
+  margin-top: 22px;
+}
+
+@media (max-width: 500px) {
+  body {
+    padding: 7px;
+  }
+
+  .container {
+    min-height: calc(100vh - 14px);
+    padding: 13px;
+    border-radius: 14px;
+  }
+
+  .clock-panel {
+    padding: 20px 8px;
+  }
+
+  .alarm-time {
+    font-size: 24px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="brand">
+      <div class="logo">⏰</div>
+      <div>
+        <h1>Nova Alarm</h1>
+        <p>Your personal alarm clock</p>
+      </div>
+    </div>
+    <div class="live-label">● LIVE CLOCK</div>
+  </header>
+
+  <section class="clock-panel">
+    <div class="clock-label">Current time</div>
+    <div id="clock">00:00:00</div>
+    <div id="date">Loading date...</div>
+  </section>
+
+  <div class="section-title">CREATE AN ALARM</div>
+
+  <div class="add-panel">
+    <select id="hours" aria-label="Hour"></select>
+    <select id="minutes" aria-label="Minute"></select>
+    <button class="add-button" onclick="addAlarm()">
+      + Add Alarm
+    </button>
+  </div>
+
+  <div class="list-heading">
+    <h2>Your alarms</h2>
+    <span id="alarmCount">0 alarms</span>
+  </div>
+
+  <div id="alarmList"></div>
+
+  <div class="bottom-actions">
+    <button class="clear-button"
+      id="clearButton"
+      onclick="clearCompletedAlarms()"
+      disabled>
+      CLEAR COMPLETED
+    </button>
+  </div>
+
+  <div class="footer">
+    NOVA ALARM CLOCK · Keep this page open for alarms to work
+  </div>
+
+</div>
+
+<script>
+const hours = document.getElementById("hours");
+const minutes = document.getElementById("minutes");
+const alarmList = document.getElementById("alarmList");
+const alarmCount = document.getElementById("alarmCount");
+const clearButton = document.getElementById("clearButton");
+
+let alarms = [];
+let audioContext = null;
+let soundTimer = null;
+let deleteTimers = new Map();
+
+// Fill the hour and minute menus.
+for (let i = 0; i < 24; i++) {
+  hours.add(new Option(String(i).padStart(2, "0"), i));
+}
+
+for (let i = 0; i < 60; i++) {
+  minutes.add(new Option(String(i).padStart(2, "0"), i));
+}
+
+// Calculate the next occurrence of a selected time.
+function getNextAlarm(h, m) {
+  const now = new Date();
+  const target = new Date();
+
+  target.setHours(h, m, 0, 0);
+
+  if (target <= now) {
+    target.setDate(target.getDate() + 1);
+  }
+
+  return target.getTime();
+}
+
+// Add an alarm.
+function addAlarm() {
+  const h = Number(hours.value);
+  const m = Number(minutes.value);
+  const targetTime = getNextAlarm(h, m);
+  const now = Date.now();
+
+  alarms.push({
+    id: Date.now() + Math.random(),
+    h,
+    m,
+    ringing: false,
+    remaining: targetTime - now,
+    originalDuration: targetTime - now,
+    lastUpdated: now
+  });
+
+  renderAlarms();
+  updateClock();
+}
+
+// Format milliseconds into a countdown.
+function formatTime(milliseconds) {
+  const seconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  return `${hrs}h ${mins}m ${secs}s`;
+}
+
+// Display alarms.
+function renderAlarms() {
+  alarmList.innerHTML = "";
+
+  if (alarms.length === 0) {
+    alarmList.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🌙</div>
+        <strong>No alarms yet</strong>
+        <p>Add an alarm using the controls above.</p>
+      </div>
+    `;
+  }
+
+  alarms.forEach(alarm => {
+    const card = document.createElement("div");
+    card.className = "alarm";
+
+    const time =
+      String(alarm.h).padStart(2, "0") + ":" +
+      String(alarm.m).padStart(2, "0");
+
+    const status = alarm.ringing ? "RINGING" : "UPCOMING";
+    const statusClass = alarm.ringing ? "ringing" : "";
+
+    card.innerHTML = `
+      <div class="alarm-top">
+        <span class="alarm-time">${time}</span>
+        <span class="status-tag ${statusClass}">
+          ${status}
+        </span>
+      </div>
+
+      <div class="countdown" id="count-${alarm.id}">
+        Calculating...
+      </div>
+
+      <div class="progress-background">
+        <div class="progress-bar" id="bar-${alarm.id}"></div>
+      </div>
+
+      <div class="alarm-buttons">
+        <button class="delete-button"
+          onclick="deleteAlarm(${alarm.id})">
+          DELETE
+        </button>
+      </div>
+    `;
+
+    alarmList.appendChild(card);
+  });
+
+  const ringingCount = alarms.filter(a => a.ringing).length;
+
+  alarmCount.textContent =
+    `${alarms.length} alarm${alarms.length === 1 ? "" : "s"}` +
+    (ringingCount ? ` · ${ringingCount} completed` : "");
+
+  clearButton.disabled = ringingCount === 0;
+}
+
+// Update clock and countdowns.
+function updateClock() {
+  const now = Date.now();
+  const date = new Date(now);
+
+  document.getElementById("clock").textContent =
+    date.toLocaleTimeString("en-GB");
+
+  document.getElementById("date").textContent =
+    date.toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+  alarms.forEach(alarm => {
+    if (alarm.ringing) return;
+
+    const elapsed = now - alarm.lastUpdated;
+    alarm.remaining -= elapsed;
+    alarm.lastUpdated = now;
+
+    if (alarm.remaining <= 0) {
+      alarm.remaining = 0;
+      triggerAlarm(alarm);
+      return;
+    }
+
+    const countdown =
+      document.getElementById("count-" + alarm.id);
+
+    const bar =
+      document.getElementById("bar-" + alarm.id);
+
+    const percentage = Math.max(
+      0,
+      Math.min(
+        100,
+        alarm.remaining / alarm.originalDuration * 100
+      )
+    );
+
+    if (bar) {
+      bar.style.width = percentage + "%";
+    }
+
+    if (countdown) {
+      countdown.textContent =
+        "Rings in " + formatTime(alarm.remaining);
+    }
+  });
+}
+
+// Trigger an alarm and schedule automatic deletion.
+function triggerAlarm(alarm) {
+  if (alarm.ringing) return;
+
+  alarm.ringing = true;
+
+  renderAlarms();
+  startSound();
+
+  const timer = setTimeout(() => {
+    deleteTimers.delete(alarm.id);
+
+    alarms = alarms.filter(a => a.id !== alarm.id);
+
+    if (!alarms.some(a => a.ringing)) {
+      stopSound();
+    }
+
+    renderAlarms();
+    updateClock();
+  }, 30000);
+
+  deleteTimers.set(alarm.id, timer);
+}
+
+// Play a repeating two-tone sound.
+function startSound() {
+  if (soundTimer) return;
+
+  audioContext = audioContext ||
+    new (window.AudioContext || window.webkitAudioContext)();
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+
+  function chime() {
+    if (!alarms.some(a => a.ringing)) {
+      stopSound();
+      return;
+    }
+
+    [660, 880].forEach((frequency, index) => {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+
+      const start =
+        audioContext.currentTime + index * 0.25;
+
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.linearRampToValueAtTime(0.32, start + 0.04);
+      gain.gain.exponentialRampToValueAtTime(
+        0.0001, start + 0.65
+      );
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start(start);
+      oscillator.stop(start + 0.7);
+    });
+  }
+
+  chime();
+  soundTimer = setInterval(chime, 1500);
+}
+
+// Stop alarm sound.
+function stopSound() {
+  if (soundTimer) {
+    clearInterval(soundTimer);
+    soundTimer = null;
+  }
+}
+
+// Delete one alarm.
+function deleteAlarm(id) {
+  if (deleteTimers.has(id)) {
+    clearTimeout(deleteTimers.get(id));
+    deleteTimers.delete(id);
+  }
+
+  alarms = alarms.filter(a => a.id !== id);
+
+  if (!alarms.some(a => a.ringing)) {
+    stopSound();
+  }
+
+  renderAlarms();
+  updateClock();
+}
+
+// Clear only alarms that have already rung.
+function clearCompletedAlarms() {
+  const completed = alarms.filter(a => a.ringing);
+
+  completed.forEach(alarm => {
+    if (deleteTimers.has(alarm.id)) {
+      clearTimeout(deleteTimers.get(alarm.id));
+      deleteTimers.delete(alarm.id);
+    }
+  });
+
+  alarms = alarms.filter(a => !a.ringing);
+
+  if (!alarms.some(a => a.ringing)) {
+    stopSound();
+  }
+
+  renderAlarms();
+  updateClock();
+}
+
+// Start everything.
+renderAlarms();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
